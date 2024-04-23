@@ -1,0 +1,120 @@
+#include <iostream>
+#include <algorithm>
+#include <limits.h>
+
+using namespace std;
+#define MAX 999
+int n;
+int **graph,*paths;
+
+void initialize(){
+    
+   // cout<<"01320";
+    graph= new int*[n];
+    paths= new int[n];
+    for(int i=0;i<n;i++){
+        graph[i]=new int[n];
+        paths[i]=i;
+    }
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            if(i==j){
+                graph[i][j]=MAX;
+            }
+            else{
+                graph[i][j]=-1;
+            }
+        }
+    }
+}
+void predef(){
+    graph[0][0]=999;
+    graph[0][1]=10;
+    graph[0][2]=15;
+    graph[0][3]=20;
+    
+    graph[1][0]=10;
+    graph[1][1]=999;
+    graph[1][2]=35;
+    graph[1][3]=25;
+    
+    graph[2][0]=15;
+    graph[2][1]=35;
+    graph[2][2]=999;
+    graph[2][3]=30;
+    
+    graph[3][0]=20;
+    graph[3][1]=25;
+    graph[3][2]=30;
+    graph[3][3]=999;
+}
+
+void display()
+{
+    cout<<"\n";
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            if(graph[i][j]==MAX){
+                cout<<"OO\t"; 
+            }
+            else{
+                cout<<graph[i][j]<<"\t"; 
+            }
+        }
+        cout<<endl;
+    }
+}
+void getd(int **d)
+{}
+
+void displayP(int *path){
+    cout<<"\nPATH:\n";
+    for(int i=0;i<n;i++){
+        cout<<path[i]<<"\t";
+    }
+    cout<<path[0];
+}
+
+int calcCost(int *p){
+    int cost=0,prev=0;
+    for(int j=1;j<n;j++){
+        cost+=graph[prev][p[j]];
+        prev=p[j];
+    }
+    
+    cost+=graph[prev][0];
+    //cout<<"\nCOst is "<<cost<<endl;
+    return cost;
+}
+int main() {
+
+    cout<<"Enter N:";
+    //cin>>n;
+    n=4;
+    
+    initialize();
+    predef();
+    display();
+    
+    int minCost = INT_MAX;
+    int* second = paths +1;
+    int* final;
+    int currCost;
+    
+    do{
+        
+        //displayP(paths);
+        currCost=calcCost(paths);
+        if(currCost<minCost){
+          minCost=currCost;
+          final = paths;
+        }
+
+    } while(next_permutation(second,paths+n));
+    
+    cout<<"\nFinal Path is:\n";
+    displayP(final);
+    cout<<"\nwith cost: "<<minCost;
+    
+    return 0;
+}
