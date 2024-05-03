@@ -1,0 +1,86 @@
+from queue import PriorityQueue
+
+class Node:
+    def _init_(self, state, parent, move, depth, cost):
+        self.state = state
+        self.parent = parent
+        self.move = move
+        self.depth = depth
+        self.cost = cost
+
+    def _lt_(self, other):
+        return self.cost < other.cost
+
+    def _eq_(self, other):
+        return self.state == other.state
+
+class Puzzle:
+    def _init_(self, initial_state):
+        self.initial_state = initial_state
+        self.goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+        self.moves = ['up', 'down', 'left', 'right']
+        self.dx = [-1, 1, 0, 0]
+        self.dy = [0, 0, -1, 1]
+
+    def find_blank(self, state):
+        for i in range(3):
+            for j in range(3):
+                if state[i][j] == 0:
+                    return i, j
+
+    def generate_children(self, node):
+        children = []
+        x, y = self.find_blank(node.state)
+        for move, dx, dy in zip(self.moves, self.dx, self.dy):
+            new_x, new_y = x + dx, y + dy
+            if 0 <= new_x < 3 and 0 <= new_y < 3:
+                new_state = [row[:] for row in node.state]
+                new_state[x][y], new_state[new_x][new_y] = new_state[new_x][new_y], new_state[x][y]
+                child = Node(new_state, node, move, node.depth + 1, 0)
+                children.append(child)
+        return children
+
+    def manhattan_distance(self, state):
+        distance = 0
+        for i in range(3):
+            for j in range(3):
+                if state[i][j] != 0:
+                    value = state[i][j] - 1
+                    goal_x, goal_y = value // 3, value % 3
+                    distance += abs(i - goal_x) + abs(j - goal_y)
+        return distance
+
+    def solve(self):
+        initial_node = Node(self.initial_state, None, None, 0, 0)
+        frontier = PriorityQueue()
+        frontier.put(initial_node)
+        explored = set()
+
+        while not frontier.empty():
+            node = frontier.get()
+            if node.state == self.goal_state:
+                return self.construct_path(node)
+            explored.add(tuple(map(tuple, node.state)))
+
+            for child in self.generate_children(node):
+                if tuple(map(tuple, child.state)) not in explored:
+                    child.cost = child.depth + self.manhattan_distance(child.state)
+                    frontier.put(child)
+
+    def construct_path(self, node):
+        path = []
+        while node.parent:
+            path.append((node.move, node.state))
+            node = node.parent
+        path.reverse()
+        return path
+
+# Example usage:
+initial_state = [[1, 2, 3], [4, 5, 6], [0, 7, 8]]
+puzzle = Puzzle(initial_state)
+solution = puzzle.solve()
+for step, state in solution:
+    print("Move:", step)
+    for row in state:
+        print(row)
+    print()
