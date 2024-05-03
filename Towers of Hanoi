@@ -1,25 +1,16 @@
-#include <iostream>
-using namespace std;
+def toh(n,A,B,C):
+    if(n==1):
+        print(f"Move Disc {n} from {A} to {C}")
+        return
+    toh(n-1,A,C,B)
+    print(f"Move Disc {n} from {A} to {c}")
+    toh(n-1,B,A,C)
 
-void moveDisk(int disk, char source, char destination) {
-    cout << "Move disk " << disk << " from " << source << " to " << destination << endl;
-}
+    if _name_ == _main_:
+        print("Enter Number of Discs")
+        n = int(input())
+        A=1
+        B=2
+        C=3
+        toh(n,A,B,C)
 
-
-void towerOfHanoi(int disks, char source, char auxiliary, char destination) {
-    if (disks == 1) {
-        moveDisk(disks, source, destination);
-        return;
-    }
-    towerOfHanoi(disks - 1, source, destination, auxiliary);
-    moveDisk(disks, source, destination);
-    towerOfHanoi(disks - 1, auxiliary, source, destination);
-}
-
-int main() {
-    int disks = 3;
-    char source = 'A', auxiliary = 'B', destination = 'C';
-    cout << "Solution for Tower of Hanoi with " << disks << " disks:" << endl;
-    towerOfHanoi(disks, source, auxiliary, destination);
-    return 0;
-}
